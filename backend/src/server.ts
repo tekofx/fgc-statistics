@@ -1,7 +1,6 @@
 import express from "express";
 import axios from "axios";
 import connectDB from "./database";
-import trainSchema from "./trainSchema";
 import trainModel from "./trainModel";
 import TrainData from "./interfaces/trainData";
 
