@@ -1,23 +1,20 @@
-#Build stage
-FROM node:22-alpine AS build
+# Use the official Node.js image as the base image
+FROM node:22-alpine
 
+# Set the working directory
 WORKDIR /app
 
-COPY package*.json yarn.lock ./
+# Copy package.json and package-lock.json
+COPY package.json yarn.lock ./
 
+# Install dependencies
 RUN yarn install
 
+# Copy the rest of the application code
 COPY . .
 
-RUN yarn run build
+# Expose the port the app runs on
+EXPOSE 1234
 
-#Production stage
-FROM node:22-alpine AS production
-
-WORKDIR /app
-
-COPY package*.json .
-
-COPY --from=build /app/dist ./dist
-
-CMD ["node", "dist/server.js"]
+# Command to run the application
+CMD ["yarn", "start"]

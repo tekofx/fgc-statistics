@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "ts-node src/server.ts",
     "build": "rimraf ./dist && tsc",
-    "start": "node dist/server.js"
+    "start": "ts-node src/server.ts --transpile-only"
   },
   "keywords": [],
   "author": "",
