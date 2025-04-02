@@ -12,6 +12,6 @@ services:
       context: ./backend
 
     environment:
-      - MONGODB_URI="mongodb://mongodb:27017"
+      - MONGODB_URI: "mongodb://mongodb:27017"
     ports:
       - 1234:1234
