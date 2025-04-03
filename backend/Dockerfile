@@ -1,20 +1,22 @@
-# Use the official Node.js image as the base image
-FROM node:22-alpine
+FROM node:20-alpine
 
 # Set the working directory
-WORKDIR /app
+WORKDIR /usr/src/app
 
-# Copy package.json and package-lock.json
-COPY package.json yarn.lock ./
+# Copy package.json, yarn.lock and tsconfig.json to the working directory
+COPY package.json yarn.lock tsconfig.json ./
 
-# Install dependencies
+# Install dependencies using Yarn
 RUN yarn install
 
-# Copy the rest of the application code
-COPY . .
+# Copy the rest of the application code to the working directory
+COPY src ./src
+
+# Build the TypeScript code
+RUN yarn run build
 
 # Expose the port the app runs on
-EXPOSE 1234
+EXPOSE 3000
 
-# Command to run the application
-CMD ["yarn", "start"]
+# Start the application
+CMD ["node", "dist/server.js"]
