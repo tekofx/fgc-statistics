@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node src/server.ts",
+    "dev": "npx nodemon -x 'ts-node --log-error' -e ts src/server.ts",
     "build": "rimraf ./dist && tsc",
     "start": "ts-node src/server.ts --transpile-only"
   },
@@ -12,7 +12,9 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "@types/cors": "^2.8.17",
     "@types/express": "^5.0.1",
+    "nodemon": "^3.1.9",
     "rimraf": "^6.0.1",
     "ts-node": "^10.9.2",
     "tsc": "^2.0.4",
@@ -20,6 +22,7 @@
   },
   "dependencies": {
     "axios": "^1.8.4",
+    "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^5.1.0",
     "mongoose": "^8.13.1"

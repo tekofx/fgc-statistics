@@ -6,8 +6,8 @@ import '@mantine/charts/styles.css';
 import {AppShell, Burger, createTheme, MantineProvider, Text} from '@mantine/core';
 import {useDisclosure} from "@mantine/hooks";
 import {useEffect, useState} from 'react';
-import axios from 'axios';
 import {BarChart} from "@mantine/charts";
+import axiosInstance from "./axiosInstance.ts";
 
 const theme = createTheme({
     /** Your theme override here */
@@ -17,7 +17,7 @@ export default function App() {
     const [opened, {toggle}] = useDisclosure();
     const [data, setData] = useState(null);
     useEffect(() => {
-        axios.get('http://localhost:1234')
+        axiosInstance.get('/')
             .then(response => {
                 setData(response.data);
             })

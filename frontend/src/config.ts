@@ -5,12 +5,12 @@ let config: Config;
 
 if (import.meta.env.PROD) {
     config = {
-        BACKEND_URL: "http://backend:3000",
+        BACKEND_URL: "http://backend:1234",
     };
 } else {
 
     config = {
-        BACKEND_URL: "http://localhost:3000",
+        BACKEND_URL: "http://localhost:1234",
     };
 }
 
