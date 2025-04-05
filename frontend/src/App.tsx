@@ -3,7 +3,7 @@
 
 import '@mantine/core/styles.css';
 import '@mantine/charts/styles.css';
-import {AppShell, Burger, Button, createTheme, MantineProvider, Stack, Text} from '@mantine/core';
+import {AppShell, Burger, Button, Container, createTheme, MantineProvider, Text} from '@mantine/core';
 import {useDisclosure} from "@mantine/hooks";
 import {useEffect, useState} from 'react';
 import {BarChart} from "@mantine/charts";
@@ -40,6 +40,26 @@ export default function App() {
             showTable: component === 'showTable',
         });
     };
+
+    function showModules() {
+        if (!data) {
+            return <Text>Loading...</Text>
+        }
+
+        if (modules.showChart) {
+            return <BarChart
+                h={300}
+                data={data}
+                dataKey="time"
+                series={[
+                    {name: 'occupation', color: 'violet.6'},
+                ]}/>;
+        }
+        if (modules.showTable) {
+            return <TrainTable trainData={data}/>;
+        }
+    }
+
     return <MantineProvider theme={theme} defaultColorScheme="dark">
         <AppShell
             header={{height: 60}}
@@ -79,26 +99,11 @@ export default function App() {
                 </Button>
 
             </AppShell.Navbar>
-
             <AppShell.Main>
-                {data ? (
-                    <Stack>
-                        {modules.showTable && (
-                            <>
-                                <BarChart
-                                    h={300}
-                                    data={data}
-                                    dataKey="time"
-                                    series={[
-                                        {name: 'occupation', color: 'violet.6'},
-                                    ]}/>
-                            </>
-                        )}
-                        {modules.showTable && <TrainTable trainData={data}/>}
-                    </Stack>
-                ) : (
-                    <Text>Loading...</Text>
-                )}
+                <Container>
+
+                    {showModules()}
+                </Container>
             </AppShell.Main>
         </AppShell>
     </MantineProvider>;
