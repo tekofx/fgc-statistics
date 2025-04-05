@@ -49,7 +49,6 @@ const fetchData = async () => {
                 });
             }
         }
-        console.log("Finished data");
     } catch (error) {
         console.error('Error fetching data:', error);
     }
