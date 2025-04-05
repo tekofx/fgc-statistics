@@ -40,7 +40,7 @@ fetchData()
 
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
-    cron.schedule("*/2 * * * *", async () => {
+    cron.schedule("* * * * *", async () => {
         await fetchData();
     })
 })
