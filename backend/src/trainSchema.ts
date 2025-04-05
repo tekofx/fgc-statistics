@@ -1,5 +1,12 @@
 import mongoose from "mongoose";
 
+const stopSchema = new mongoose.Schema({
+    parada: {
+        type: String,
+        required: true,
+    },
+});
+
 const trainSchema = new mongoose.Schema({
     id: {
         type: String,
@@ -21,6 +28,12 @@ const trainSchema = new mongoose.Schema({
         type: Date,
         required: true,
     },
+    nextStops: [
+        {
+            type: stopSchema,
+            required: true,
+        }
+    ],
     occupation:{
         type: Number,
         required: true,

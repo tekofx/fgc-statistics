@@ -4,4 +4,5 @@ export default interface TrainData{
     origen: string;
     desti: string;
     ocupacio_mi_percent: number;
+    properes_parades: string
 }
