@@ -72,7 +72,7 @@ export default function TrainTable({trainData}: Props) {
 
     return (
         <>
-            <Group grow>
+            <Group grow align="end">
                 <Select
                     label="Sort by"
                     value={sortAttribute}
