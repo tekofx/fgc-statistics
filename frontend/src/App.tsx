@@ -3,11 +3,12 @@
 
 import '@mantine/core/styles.css';
 import '@mantine/charts/styles.css';
-import {AppShell, Burger, createTheme, MantineProvider, Text} from '@mantine/core';
+import {AppShell, Burger, createTheme, MantineProvider, Stack, Text} from '@mantine/core';
 import {useDisclosure} from "@mantine/hooks";
 import {useEffect, useState} from 'react';
 import {BarChart} from "@mantine/charts";
 import axiosInstance from "./axiosInstance.ts";
+import TrainTable from "./components/TrainTable.tsx";
 
 const theme = createTheme({
     /** Your theme override here */
@@ -49,12 +50,12 @@ export default function App() {
 
             <AppShell.Main>
                 {data ? (
-                    <>
-                        <Text>{JSON.stringify(data)}</Text>
+                    <Stack>
                         <BarChart h={300} data={data} dataKey="time" series={[
                             {name: 'occupation', color: 'violet.6'},
                         ]}/>
-                    </>
+                        <TrainTable trainData={data}/>
+                    </Stack>
                 ) : (
                     <Text>Loading...</Text>
                 )}
