@@ -4,6 +4,7 @@ import connectDB from "./database";
 import trainModel from "./trainModel";
 import TrainData from "./interfaces/trainData";
 import cors from "cors";
+import * as path from "node:path";
 
 const fgcApiUrl="https://dadesobertes.fgc.cat/api/explore/v2.1/catalog/datasets/posicionament-dels-trens/records?select=id%2C%20lin%2C%20origen%2C%20desti%2C%20ocupacio_mi_percent&where=lin%20IN%20(%22R5%22%2C%20%22R6%22%2C%20%22S4%22%2C%20%22S8%22)&limit=20"
 
@@ -14,8 +15,10 @@ app.use(cors())
 
 connectDB()
 
+app.use(express.static(path.join(__dirname, 'public')));
 
-app.get('/', async (req, res) => {
+
+app.get('/data', async (req, res) => {
     await trainModel.find({}).then((data) => {
         res.json(data);
     })
@@ -27,6 +30,11 @@ app.get("/fetch", async (req, res) => {
         res.json(data);
     })
 })
+
+// Serve the index.html file in production
+app.get('/', function (req, res) {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
 
 
 app.use(express.json());

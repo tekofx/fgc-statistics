@@ -17,7 +17,7 @@ export default function App() {
     const [opened, {toggle}] = useDisclosure();
     const [data, setData] = useState(null);
     useEffect(() => {
-        axiosInstance.get('/')
+        axiosInstance.get('/data')
             .then(response => {
                 setData(response.data);
             })
