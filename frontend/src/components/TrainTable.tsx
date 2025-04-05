@@ -8,6 +8,8 @@ interface Props {
 
 export default function TrainTable({trainData}: Props) {
     const [sortAttribute, setSortAttribute] = useState<keyof TrainData>('id');
+    const [filterAttribute, setFilterAttribute] = useState<keyof TrainData | null>(null);
+    const [filterValue, setFilterValue] = useState<string | null>(null);
 
     const handleSort = (a: TrainData, b: TrainData) => {
         if (a[sortAttribute] < b[sortAttribute]) return -1;
@@ -15,7 +17,12 @@ export default function TrainTable({trainData}: Props) {
         return 0;
     };
 
-    const sortedData = [...trainData].sort(handleSort);
+    const handleFilter = (data: TrainData[]) => {
+        if (!filterAttribute || !filterValue) return data;
+        return data.filter(item => item[filterAttribute]?.toString().includes(filterValue));
+    };
+
+    const sortedData = handleFilter([...trainData].sort(handleSort));
 
     const rows = sortedData.map((element) => (
         <Table.Tr key={element._id}>
@@ -28,18 +35,31 @@ export default function TrainTable({trainData}: Props) {
         </Table.Tr>
     ));
 
-    const handleSelectChange = (value: string | null) => {
+    const handleSortChange = (value: string | null) => {
         if (value) {
             setSortAttribute(value as keyof TrainData);
         }
     };
+
+    const handleFilterAttributeChange = (value: string | null) => {
+        setFilterAttribute(value as keyof TrainData);
+    };
+
+    const handleFilterValueChange = (value: string | null) => {
+        setFilterValue(value);
+    };
+
+    const uniqueFilterValues = Array.from(new Set(trainData
+        .map(item => item[filterAttribute]?.toString() || '')
+        .filter(value => value !== '')
+    ));
 
     return (
         <>
             <Select
                 label="Sort by"
                 value={sortAttribute}
-                onChange={handleSelectChange}
+                onChange={handleSortChange}
                 data={[
                     {value: 'id', label: 'Id'},
                     {value: 'line', label: 'Line'},
@@ -47,6 +67,26 @@ export default function TrainTable({trainData}: Props) {
                     {value: 'destination', label: 'Destination'},
                     {value: 'occupation', label: 'Occupation'},
                 ]}
+            />
+            <Select
+                label="Filter by"
+                value={filterAttribute}
+                onChange={handleFilterAttributeChange}
+                data={[
+                    {value: 'id', label: 'Id'},
+                    {value: 'line', label: 'Line'},
+                    {value: 'origin', label: 'Origin'},
+                    {value: 'destination', label: 'Destination'},
+                    {value: 'occupation', label: 'Occupation'},
+                ]}
+            />
+            <Select
+                label="Filter value"
+                value={filterValue}
+                onChange={handleFilterValueChange}
+                data={uniqueFilterValues.map(value => ({value, label: value}))}
+                searchable
+                clearable
             />
             <Table>
                 <Table.Thead>

@@ -27,7 +27,6 @@ const fetchData = async () => {
         for (let i = 0; i < results.length; i++) {
             const result = results[i];
             const nextStops = result.properes_parades.split(';').map(item => JSON.parse(item)).map(item => item.parada);
-            console.log(nextStops);
 
             const existingRecord = await trainModel.findOne({
                 line: result.lin,
@@ -38,8 +37,8 @@ const fetchData = async () => {
             });
 
             if (!existingRecord) {
-                console.log(`Saving ${result.lin} ${result.origen} ${result.desti} ${nextStops} ${result.ocupacio_mi_percent / 100}`);
-                const transaction = await trainModel.create({
+                console.log(`Saving ${result.id} ${result.lin} ${result.origen} ${result.desti} ${nextStops} ${result.ocupacio_mi_percent / 100}`);
+                await trainModel.create({
                     id: result.id,
                     line: result.lin,
                     origin: result.origen,
