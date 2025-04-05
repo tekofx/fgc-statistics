@@ -35,6 +35,8 @@ app.get('/', function (req, res) {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+fetchData()
+
 
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)

@@ -24,7 +24,7 @@ export default function TrainTable({trainData}: Props) {
             <Table.Td>{element.origin}</Table.Td>
             <Table.Td>{element.destination}</Table.Td>
             <Table.Td>{element.occupation}</Table.Td>
-            <Table.Td>{element.nextStops.map(stop => `${stop.parada}`).join(", ")}</Table.Td>
+            <Table.Td>{element.nextStops.toString()}</Table.Td>
         </Table.Tr>
     ));
 

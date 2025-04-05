@@ -30,11 +30,11 @@ const trainSchema = new mongoose.Schema({
     },
     nextStops: [
         {
-            type: stopSchema,
+            type: String,
             required: true,
         }
     ],
-    occupation:{
+    occupation: {
         type: Number,
         required: true,
     }

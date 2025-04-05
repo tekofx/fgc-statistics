@@ -1,7 +1,3 @@
-interface Stop {
-    parada: string;
-}
-
 export default interface TrainData {
     _id: string;
     id: string,
@@ -9,5 +5,5 @@ export default interface TrainData {
     origin: string;
     destination: string;
     occupation: number;
-    nextStops: Array<Stop>;
+    nextStops: Array<string>;
 }
