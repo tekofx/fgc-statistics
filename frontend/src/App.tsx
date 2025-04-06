@@ -3,8 +3,8 @@
 
 import '@mantine/core/styles.css';
 import '@mantine/charts/styles.css';
-import {AppShell, Burger, Button, Container, createTheme, MantineProvider, Text} from '@mantine/core';
-import {useDisclosure} from "@mantine/hooks";
+import {AppShell, Burger, Button, createTheme, MantineProvider, Stack, Text} from '@mantine/core';
+import {useDisclosure, useViewportSize} from "@mantine/hooks";
 import {useEffect, useState} from 'react';
 import {BarChart} from "@mantine/charts";
 import axiosInstance from "./axiosInstance.ts";
@@ -18,10 +18,11 @@ const theme = createTheme({
 export default function App() {
     const [opened, {toggle}] = useDisclosure();
     const [data, setData] = useState(null);
+    const {width, height} = useViewportSize()
 
     const [modules, setModules] = useState({
-        showChart: false,
-        showTable: true,
+        showChart: true,
+        showTable: false,
     });
     useEffect(() => {
         axiosInstance.get('/data')
@@ -49,6 +50,7 @@ export default function App() {
         if (modules.showChart) {
             return <BarChart
                 h={300}
+                w={{sm: width, md: width - 350}}
                 data={data}
                 dataKey="time"
                 series={[
@@ -56,11 +58,13 @@ export default function App() {
                 ]}/>;
         }
         if (modules.showTable) {
-            return <TrainTable trainData={data}/>;
+            return (
+                <TrainTable trainData={data}/>
+            )
         }
     }
 
-    return <MantineProvider theme={theme} defaultColorScheme="dark">
+    return (<MantineProvider theme={theme} defaultColorScheme="dark">
         <AppShell
             header={{height: 60}}
             navbar={{
@@ -100,11 +104,13 @@ export default function App() {
 
             </AppShell.Navbar>
             <AppShell.Main>
-                <Container>
+                <Stack align="stretch">
+
 
                     {showModules()}
-                </Container>
+                </Stack>
             </AppShell.Main>
         </AppShell>
-    </MantineProvider>;
+    </MantineProvider>)
 }
+
