@@ -1,15 +1,15 @@
 import {BarChart} from "@mantine/charts";
 import {useFetch, useViewportSize} from "@mantine/hooks";
-import TrainData from "../interface/trainData.ts";
 import config from "../config.ts";
 import {Alert, Button} from "@mantine/core";
 import {IconAlertTriangle, IconReload} from "@tabler/icons-react";
+import TimeData from "../interface/timeData.ts";
 
 export default function TimeChart() {
     const {width} = useViewportSize()
 
-    const {data, loading, error, refetch} = useFetch<TrainData[]>(
-        `${config.BACKEND_URL}/data`
+    const {data, loading, error, refetch} = useFetch<TimeData[]>(
+        `${config.BACKEND_URL}/time`
     );
 
     return (
@@ -27,9 +27,9 @@ export default function TimeChart() {
                 h={300}
                 w={width - 350}
                 data={data || []}
-                dataKey="time"
+                dataKey="hour"
                 series={[
-                    {name: 'occupation', color: 'violet.6'},
+                    {name: 'averageOccupation', color: 'violet.6'},
                 ]}/>
         </>
     )
