@@ -18,6 +18,7 @@ const connectDB = async () => {
 
 const fetchData = async () => {
     try {
+        console.log(new Date().toLocaleString(), "Fetching data from FGC API");
         const response = await axios.get(fgcApiUrl);
         const results: Array<TrainData> = response.data.results;
 
@@ -37,7 +38,6 @@ const fetchData = async () => {
             });
 
             if (!existingRecord) {
-                console.log(`Saving ${result.id} ${result.lin} ${result.origen} ${result.desti} ${nextStops} ${result.ocupacio_mi_percent / 100}`);
                 await trainModel.create({
                     id: result.id,
                     line: result.lin,
