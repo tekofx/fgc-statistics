@@ -28,7 +28,6 @@ export default function TimeChart() {
                 w={width - 350}
                 unit="%"
                 yAxisProps={{domain: [0, 100]}}
-                yMax={100}
                 data={data || []}
                 dataKey="hour"
                 series={[
