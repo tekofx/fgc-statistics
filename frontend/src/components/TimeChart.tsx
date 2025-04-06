@@ -26,6 +26,9 @@ export default function TimeChart() {
             <BarChart
                 h={300}
                 w={width - 350}
+                unit="%"
+                yAxisProps={{domain: [0, 100]}}
+                yMax={100}
                 data={data || []}
                 dataKey="hour"
                 series={[
