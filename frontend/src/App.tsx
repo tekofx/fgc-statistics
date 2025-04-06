@@ -3,8 +3,8 @@
 
 import '@mantine/core/styles.css';
 import '@mantine/charts/styles.css';
-import {AppShell, Burger, Button, createTheme, MantineProvider, Stack, Text} from '@mantine/core';
-import {useDisclosure, useViewportSize} from "@mantine/hooks";
+import {AppShell, Burger, Button, createTheme, em, MantineProvider, Stack, Text} from '@mantine/core';
+import {useDisclosure, useMediaQuery, useViewportSize} from "@mantine/hooks";
 import {useEffect, useState} from 'react';
 import {BarChart} from "@mantine/charts";
 import axiosInstance from "./axiosInstance.ts";
@@ -18,7 +18,8 @@ const theme = createTheme({
 export default function App() {
     const [opened, {toggle}] = useDisclosure();
     const [data, setData] = useState(null);
-    const {width, height} = useViewportSize()
+    const {width} = useViewportSize()
+    const isMobile = useMediaQuery(`(max-width: ${em(750)})`);
 
     const [modules, setModules] = useState({
         showChart: true,
@@ -50,7 +51,7 @@ export default function App() {
         if (modules.showChart) {
             return <BarChart
                 h={300}
-                w={{sm: width, md: width - 350}}
+                w={isMobile ? width : width - 320}
                 data={data}
                 dataKey="time"
                 series={[
