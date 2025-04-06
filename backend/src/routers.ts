@@ -7,9 +7,15 @@ const router = express.Router();
 
 
 router.get("/time", async (req, res) => {
-    // Get all trains per hours and make the average of the occupation
-    console.log(req.query);
-    await trainModel.aggregate([
+
+    const line = req.query.line;
+
+    const pipeline: any[] = [];
+    if (line) {
+        pipeline.push({$match: {line: line}});
+    }
+
+    pipeline.push(
         {
             $group: {
                 _id: {
@@ -28,7 +34,10 @@ router.get("/time", async (req, res) => {
                 averageOccupation: {$round: [{$multiply: ["$averageOccupation", 100]}, 2]}
             }
         }
-    ]).then((data) => {
+    );
+
+
+    await trainModel.aggregate(pipeline).then((data) => {
         res.json(data);
     }).catch((err) => {
         console.log(err);
