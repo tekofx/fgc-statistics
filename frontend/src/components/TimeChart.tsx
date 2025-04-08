@@ -9,7 +9,7 @@ export default function TimeChart() {
     const {width} = useViewportSize()
 
     const {data, loading, error, refetch} = useFetch<TimeData[]>(
-        `${config.BACKEND_URL}/time`
+        `${config.BACKEND_URL}/occupation`
     );
 
     return (

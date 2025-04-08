@@ -6,7 +6,7 @@ import {fetchData} from "./database";
 const router = express.Router();
 
 
-router.get("/time", async (req, res) => {
+router.get("/occupation", async (req, res) => {
 
     const line = req.query.line;
     const nextStop = req.query.nextStop;
