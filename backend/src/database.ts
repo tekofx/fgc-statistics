@@ -4,8 +4,7 @@ import axios from "axios";
 import TrainData from "./interfaces/trainData";
 import trainModel from "./trainModel";
 
-const fgcApiUrl = "https://dadesobertes.fgc.cat/api/explore/v2.1/catalog/datasets/posicionament-dels-trens/records?where=lin%20IN%20(%22R5%22%2C%20%22R6%22%2C%20%22S4%22%2C%20%22S8%22)&limit=20"
-
+const fgcApiUrl = "https://dadesobertes.fgc.cat/api/explore/v2.1/catalog/datasets/posicionament-dels-trens/records?limit=-1"
 const connectDB = async () => {
     try {
         await mongoose.connect(`${config.MONGODB_URI}/app`, {});
