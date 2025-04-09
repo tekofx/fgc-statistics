@@ -39,7 +39,7 @@ export default function Layout() {
                     label="Occupation Chart"
                     href="/chart"
                     leftSection={<IconUsers size={16} stroke={1.5}/>}
-                    active={location.pathname === '/chart'}
+                    active={location.pathname === '/chart/'}
                 />
             </AppShell.Navbar>
 
