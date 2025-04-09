@@ -1,12 +1,15 @@
 import {useState} from 'react';
 import {Button, Group, Select, Table} from '@mantine/core';
 import TrainData from "../interface/trainData.ts";
+import {useFetch} from "@mantine/hooks";
+import config from "../config.ts";
 
-interface Props {
-    trainData: TrainData[];
-}
 
-export default function TrainTable({trainData}: Props) {
+export default function TrainTable() {
+
+    const {data} = useFetch<TrainData[]>(
+        `${config.BACKEND_URL}/data`
+    );
     const [sortAttribute, setSortAttribute] = useState<keyof TrainData>('id');
     const [filterAttribute, setFilterAttribute] = useState<keyof TrainData | null>(null);
     const [filterValue, setFilterValue] = useState<string | null>(null);
@@ -22,7 +25,7 @@ export default function TrainTable({trainData}: Props) {
         return data.filter(item => item[filterAttribute!]?.toString().includes(filterValue));
     };
 
-    const sortedData = handleFilter([...trainData].sort(handleSort));
+    const sortedData = handleFilter([...(data || [])].sort(handleSort));
     const formatDate = (date: Date) => {
         return new Date(date).toLocaleString('en-GB', {
             day: '2-digit',
@@ -65,7 +68,7 @@ export default function TrainTable({trainData}: Props) {
         setFilterAttribute(null);
     }
 
-    const uniqueFilterValues = Array.from(new Set(trainData
+    const uniqueFilterValues = Array.from(new Set((data || [])
         .map(item => filterAttribute ? item[filterAttribute]?.toString() || '' : '')
         .filter(value => value !== '')
     ));
