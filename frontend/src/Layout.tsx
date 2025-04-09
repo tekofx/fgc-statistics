@@ -1,11 +1,13 @@
-import {AppShell, Burger, Button, NavLink, Stack} from '@mantine/core';
+import {AppShell, Burger, NavLink, Stack} from '@mantine/core';
 import {useDisclosure} from "@mantine/hooks";
-import {IconChartBar, IconHome2, IconTable} from "@tabler/icons-react";
-import {Outlet} from "react-router";
+import {IconBorderAll, IconUsers} from "@tabler/icons-react";
+import {Outlet, useLocation} from "react-router";
 
 
 export default function Layout() {
     const [opened, {toggle}] = useDisclosure();
+    const location = useLocation()
+    console.log(location)
     return (
         <AppShell
             header={{height: 60}}
@@ -28,27 +30,17 @@ export default function Layout() {
 
             <AppShell.Navbar p="md">
                 <NavLink
-                    label="Occupation Chart"
-                    href="/chart"
-                    leftSection={<IconHome2 size={16} stroke={1.5}/>}
-                />
-                <NavLink
                     label="All data table"
                     href="/"
-                    leftSection={<IconHome2 size={16} stroke={1.5}/>}
+                    leftSection={<IconBorderAll size={16} stroke={1.5}/>}
+                    active={location.pathname === '/'}
                 />
-                <Button
-                    variant="subtle"
-                    leftSection={<IconChartBar/>}
-                >
-                    Chart
-                </Button>
-                <Button
-                    variant="subtle"
-                    leftSection={<IconTable/>}
-                >
-                    Table
-                </Button>
+                <NavLink
+                    label="Occupation Chart"
+                    href="/chart"
+                    leftSection={<IconUsers size={16} stroke={1.5}/>}
+                    active={location.pathname === '/chart'}
+                />
             </AppShell.Navbar>
 
             <AppShell.Main>
