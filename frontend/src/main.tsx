@@ -18,10 +18,12 @@ const router = createBrowserRouter([
             {
                 index: true, Component: TrainTable
             },
-            {path: "chart", Component: TimeChart},
+            {
+                path: "chart",
+                Component: TimeChart
+            },
         ]
     },
-    {path: "/test", element: <p>Hola</p>}
 ])
 
 createRoot(document.getElementById('root')!).render(
