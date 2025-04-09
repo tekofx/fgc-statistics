@@ -1,4 +1,4 @@
-import {AppShell, Burger, NavLink, Stack} from '@mantine/core';
+import {AppShell, Burger, Group, Highlight, NavLink, Stack, Title} from '@mantine/core';
 import {useDisclosure} from "@mantine/hooks";
 import {IconBorderAll, IconUsers} from "@tabler/icons-react";
 import {Outlet, useLocation} from "react-router";
@@ -19,13 +19,31 @@ export default function Layout() {
             padding="md"
         >
             <AppShell.Header>
-                <Burger
-                    opened={opened}
-                    onClick={toggle}
-                    hiddenFrom="sm"
-                    size="sm"
-                />
-                <div>Logo</div>
+                <Group h="100%" px="md">
+                    <Burger
+                        opened={opened}
+                        onClick={toggle}
+                        hiddenFrom="sm"
+                        size="sm"
+                    />
+                    <Title order={1}>
+                        <Highlight
+                            highlight="FGC Statistics"
+                            style={{fontSize: 'inherit', fontWeight: 'inherit', lineHeight: 'inherit'}}
+                            highlightStyles={{
+                                backgroundImage:
+                                    'linear-gradient(45deg, #92D500, white)',
+                                fontWeight: 700,
+                                WebkitBackgroundClip: 'text',
+                                WebkitTextFillColor: 'transparent',
+                            }}
+                        >
+                            FGC Statistics
+                        </Highlight>
+
+                    </Title>
+                </Group>
+
             </AppShell.Header>
 
             <AppShell.Navbar p="md">
@@ -37,14 +55,14 @@ export default function Layout() {
                 />
                 <NavLink
                     label="Occupation Chart"
-                    href="/chart"
+                    href="/chart/"
                     leftSection={<IconUsers size={16} stroke={1.5}/>}
                     active={location.pathname === '/chart/'}
                 />
             </AppShell.Navbar>
 
             <AppShell.Main>
-                <Stack align="stretch">
+                <Stack>
                     <Outlet/>
                 </Stack>
             </AppShell.Main>
