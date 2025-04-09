@@ -1,7 +1,7 @@
 import {BarChart} from "@mantine/charts";
 import {useFetch, useViewportSize} from "@mantine/hooks";
 import config from "../config.ts";
-import {Alert, Autocomplete, Button, OptionsFilter} from "@mantine/core";
+import {Alert, Autocomplete, Button} from "@mantine/core";
 import {IconAlertTriangle, IconReload} from "@tabler/icons-react";
 import TimeData from "../interface/timeData.ts";
 import {useState} from "react";
@@ -31,17 +31,13 @@ export default function TimeChart() {
     };
 
 
-    const optionsFilter: OptionsFilter = ({options, search}) => {
-        return options.filter((option) =>
-            option.label.toLowerCase().includes(search.toLowerCase())
-        );
-    };
-
-
     return (
         <>
             {!loadingStopCodes && !errorStopCodes && (
 
+                /*TODO: Remove value and label and only set an array of nom_estacio.
+                   Warning: Monistrol de Montserrat is duplicated and gives an error
+                * */
                 <Autocomplete
                     label="Next Stop"
                     onChange={handleStopCodeChange}
@@ -49,7 +45,6 @@ export default function TimeChart() {
                         value: stopCode.inicials,
                         label: stopCode.nom_estacio, // Add the label property
                     }))}
-                    filter={optionsFilter}
                 />
             )}
             <Button loaderProps={{type: "dots"}} loading={loadingOccupation} leftSection={<IconReload/>}

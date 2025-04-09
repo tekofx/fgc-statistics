@@ -51,7 +51,7 @@ export default function App() {
         }
         if (modules.showTable) {
             return (
-                <TrainTable trainData={data}/>
+                <TrainTable/>
             )
         }
     }

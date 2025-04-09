@@ -1,6 +1,6 @@
-import {AppShell, Burger, Button, Stack} from '@mantine/core';
+import {AppShell, Burger, Button, NavLink, Stack} from '@mantine/core';
 import {useDisclosure} from "@mantine/hooks";
-import {IconChartBar, IconTable} from "@tabler/icons-react";
+import {IconChartBar, IconHome2, IconTable} from "@tabler/icons-react";
 import {Outlet} from "react-router";
 
 
@@ -27,6 +27,16 @@ export default function Layout() {
             </AppShell.Header>
 
             <AppShell.Navbar p="md">
+                <NavLink
+                    label="Occupation Chart"
+                    href="/chart"
+                    leftSection={<IconHome2 size={16} stroke={1.5}/>}
+                />
+                <NavLink
+                    label="All data table"
+                    href="/"
+                    leftSection={<IconHome2 size={16} stroke={1.5}/>}
+                />
                 <Button
                     variant="subtle"
                     leftSection={<IconChartBar/>}
