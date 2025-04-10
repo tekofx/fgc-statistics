@@ -59,8 +59,34 @@ router.get("/occupation", async (req, res) => {
 })
 
 router.get('/data', async (req, res) => {
-    await trainModel.find({}).then((data) => {
+    const filter = req.query.filter as string | undefined;
+    const sort = req.query.sort as string | undefined;
+
+    const pipeline: any[] = [];
+
+    if (filter) {
+        const key = filter.split("=")[0]
+        const value = filter.split("=")[1]
+        pipeline.push({
+            $match: {
+                [key]: {
+                    $regex: value,
+                    $options: "i"
+                }
+            }
+        });
+
+    }
+
+    if (sort) {
+        pipeline.push({$sort: {[sort]: 1}});
+    }
+
+    await trainModel.aggregate(pipeline).then((data) => {
         res.json(data);
+    }).catch((err) => {
+        console.log(err);
+        res.status(500).json({error: "Error fetching data"});
     })
 })
 

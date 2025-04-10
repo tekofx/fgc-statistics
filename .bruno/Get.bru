@@ -5,7 +5,12 @@ meta {
 }
 
 get {
-  url: http://localhost:1234/api/data
+  url: http://localhost:1234/api/data?filter=line=S1&sort=id
   body: none
   auth: inherit
+}
+
+params:query {
+  filter: line=S1
+  sort: id
 }
