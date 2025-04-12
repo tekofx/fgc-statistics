@@ -1,48 +1,34 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {Button, Group, Loader, Select, Table} from '@mantine/core';
 import TrainData from "../interface/trainData.ts";
 import {useFetch} from "@mantine/hooks";
 import config from "../config.ts";
 
-
 export default function TrainTable() {
-
-    const {data, loading} = useFetch<TrainData[]>(
-        `${config.BACKEND_URL}/data`
-    );
-
-
-    const [sortAttribute, setSortAttribute] = useState<keyof TrainData>('id');
-    const [filterAttribute, setFilterAttribute] = useState<keyof TrainData | null>(null);
+    const [sortAttribute, setSortAttribute] = useState<string | null>(null);
+    const [filterAttribute, setFilterAttribute] = useState<string | null>(null);
+    const [filterOptions, setFilterOptions] = useState<string[]>([]);
     const [filterValue, setFilterValue] = useState<string | null>(null);
+    const [url, setUrl] = useState(`${config.BACKEND_URL}/data`);
 
-    const handleSort = (a: TrainData, b: TrainData) => {
-        if (a[sortAttribute] < b[sortAttribute]) return -1;
-        if (a[sortAttribute] > b[sortAttribute]) return 1;
-        return 0;
-    };
+    // Update the URL whenever filter or sort changes
+    useEffect(() => {
+        const params = new URLSearchParams();
+        if (filterAttribute && filterValue) {
+            params.append('filter', `${filterAttribute}=${filterValue}`);
+        }
+        if (sortAttribute) {
+            params.append('sort', sortAttribute);
+        }
+        setUrl(`${config.BACKEND_URL}/data?${params.toString()}`);
+    }, [filterAttribute, filterValue, sortAttribute]);
 
-    const handleFilter = (data: TrainData[]) => {
-        if (!filterAttribute || !filterValue) return data;
-        return data.filter(item => item[filterAttribute!]?.toString().includes(filterValue));
-    };
+    const {data, loading, error} = useFetch<TrainData[]>(url);
 
-    const sortedData = handleFilter([...(data || [])].sort(handleSort));
-    const formatDate = (date: Date) => {
-        return new Date(date).toLocaleString('en-GB', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-        }).replace(',', '');
-    };
-
-    const rows = sortedData.map((element) => (
+    const rows = (data || []).map((element) => (
         <Table.Tr key={element._id}>
             <Table.Td>{element.id}</Table.Td>
-            <Table.Td>{formatDate(element.time)}</Table.Td>
+            <Table.Td>{element.time.toLocaleString()}</Table.Td>
             <Table.Td>{element.line}</Table.Td>
             <Table.Td>{element.origin}</Table.Td>
             <Table.Td>{element.destination}</Table.Td>
@@ -52,13 +38,18 @@ export default function TrainTable() {
     ));
 
     const handleSortChange = (value: string | null) => {
-        if (value) {
-            setSortAttribute(value as keyof TrainData);
-        }
+        setSortAttribute(value);
     };
 
     const handleFilterAttributeChange = (value: string | null) => {
-        setFilterAttribute(value as keyof TrainData);
+        setFilterAttribute(value);
+        if (value && data) {
+            // Extract unique values for the selected attribute
+            const uniqueValues = Array.from(new Set(data.map((item) => item[value as keyof TrainData]?.toString() || '')));
+            setFilterOptions(uniqueValues);
+        } else {
+            setFilterOptions([]);
+        }
     };
 
     const handleFilterValueChange = (value: string | null) => {
@@ -68,17 +59,14 @@ export default function TrainTable() {
     const onClear = () => {
         setFilterValue(null);
         setFilterAttribute(null);
-    }
-
-    const uniqueFilterValues = Array.from(new Set((data || [])
-        .map(item => filterAttribute ? item[filterAttribute]?.toString() || '' : '')
-        .filter(value => value !== '')
-    ));
+    };
 
 
     function Render() {
         if (loading) {
             return <Loader size="xl" variant="dots"/>;
+        } else if (error) {
+            return <div>Error loading data: {error.message}</div>;
         } else {
             return (
                 <>
@@ -115,7 +103,7 @@ export default function TrainTable() {
                                     label="Filter value"
                                     value={filterValue}
                                     onChange={handleFilterValueChange}
-                                    data={uniqueFilterValues.map(value => ({value, label: value}))}
+                                    data={filterOptions.map((option) => ({value: option, label: option}))}
                                     searchable
                                     clearable
                                 />
@@ -138,11 +126,9 @@ export default function TrainTable() {
                         <Table.Tbody>{rows}</Table.Tbody>
                     </Table>
                 </>
-            )
+            );
         }
     }
 
-    return (
-        <Render/>
-    )
+    return <Render/>;
 }

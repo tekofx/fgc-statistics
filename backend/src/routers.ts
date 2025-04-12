@@ -82,12 +82,22 @@ router.get('/data', async (req, res) => {
         pipeline.push({$sort: {[sort]: 1}});
     }
 
-    await trainModel.aggregate(pipeline).then((data) => {
-        res.json(data);
-    }).catch((err) => {
-        console.log(err);
-        res.status(500).json({error: "Error fetching data"});
-    })
+    if (pipeline.length === 0) {
+        // Fetch all data if no filter or sort is provided
+        await trainModel.find({}).then((data) => {
+            res.json(data);
+        }).catch((err) => {
+            console.log(err);
+            res.status(500).json({error: "Error fetching data"});
+        });
+    } else {
+        await trainModel.aggregate(pipeline).then((data) => {
+            res.json(data);
+        }).catch((err) => {
+            console.log(err);
+            res.status(500).json({error: "Error fetching data"});
+        })
+    }
 })
 
 router.get("/fetch", async (req, res) => {
