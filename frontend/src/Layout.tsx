@@ -1,6 +1,6 @@
 import {AppShell, Burger, Group, Highlight, NavLink, Stack, Title} from '@mantine/core';
 import {useDisclosure} from "@mantine/hooks";
-import {IconBorderAll, IconUsers} from "@tabler/icons-react";
+import {IconBorderAll, IconHome, IconUsers} from "@tabler/icons-react";
 import {Outlet, useLocation} from "react-router";
 
 
@@ -48,10 +48,16 @@ export default function Layout() {
 
             <AppShell.Navbar p="md">
                 <NavLink
-                    label="All data table"
+                    label="Home"
                     href="/"
-                    leftSection={<IconBorderAll size={16} stroke={1.5}/>}
+                    leftSection={<IconHome size={16} stroke={1.5}/>}
                     active={location.pathname === '/'}
+                />
+                <NavLink
+                    label="All data table"
+                    href="/all-data"
+                    leftSection={<IconBorderAll size={16} stroke={1.5}/>}
+                    active={location.pathname === '/all-data'}
                 />
                 <NavLink
                     label="Occupation Chart"

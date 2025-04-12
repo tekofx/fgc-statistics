@@ -16,6 +16,7 @@ export default defineConfig({
             input: {
                 main: resolve(__dirname, 'index.html'),
                 chart: resolve(__dirname, 'chart/index.html'),
+                allData: resolve(__dirname, 'all-data/index.html'),
 
             },
         },

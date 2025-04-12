@@ -7,6 +7,7 @@ import TimeChart from "./components/TimeChart.tsx";
 import {createTheme, MantineProvider} from "@mantine/core";
 import '@mantine/core/styles.css';
 import '@mantine/charts/styles.css';
+import Home from "./components/Home.tsx";
 
 const theme = createTheme({});
 
@@ -16,7 +17,11 @@ const router = createBrowserRouter([
         Component: Layout,
         children: [
             {
-                index: true, Component: TrainTable
+                index: true, Component: Home
+            },
+            {
+                path: "all-data",
+                Component: TrainTable
             },
             {
                 path: "chart",
