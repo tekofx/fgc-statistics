@@ -57,7 +57,7 @@ export default function Layout() {
                     label="All data table"
                     href="/all-data"
                     leftSection={<IconBorderAll size={16} stroke={1.5}/>}
-                    active={location.pathname === '/all-data'}
+                    active={location.pathname === '/all-data/'}
                 />
                 <NavLink
                     label="Occupation Chart"
