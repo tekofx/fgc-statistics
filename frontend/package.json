@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "generate-html": "node scripts/generate-html.cjs",
+    "build": "tsc -b && yarn run generate-html && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
