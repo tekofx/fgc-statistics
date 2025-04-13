@@ -1,29 +1,33 @@
 import {useEffect, useState} from 'react';
-import {Button, Group, Loader, Select, Table} from '@mantine/core';
+import {ActionIcon, Button, Group, Loader, Select, Table} from '@mantine/core';
+import {IconArrowDown, IconArrowUp, IconSwitchVertical} from '@tabler/icons-react';
 import TrainData from "../interface/trainData.ts";
 import {useFetch} from "@mantine/hooks";
 import config from "../config.ts";
 
 export default function TrainTable() {
     const [sortAttribute, setSortAttribute] = useState<string | null>(null);
+    const [sortDirection, setSortDirection] = useState<1 | -1>(1);
     const [filterAttribute, setFilterAttribute] = useState<string | null>(null);
     const [filterOptions, setFilterOptions] = useState<string[]>([]);
     const [filterValue, setFilterValue] = useState<string | null>(null);
     const [url, setUrl] = useState(`${config.BACKEND_URL}/data`);
 
-    // Update the URL whenever filter or sort changes
     useEffect(() => {
         const params = new URLSearchParams();
         if (filterAttribute && filterValue) {
             params.append('filter', `${filterAttribute}=${filterValue}`);
         }
         if (sortAttribute) {
-            params.append('sort', sortAttribute);
+            params.append('sort', `${sortAttribute}:${sortDirection}`);
         }
-        setUrl(`${config.BACKEND_URL}/data?${params.toString()}`);
-    }, [filterAttribute, filterValue, sortAttribute]);
 
-    const {data, loading, error} = useFetch<TrainData[]>(url);
+        setUrl(`${config.BACKEND_URL}/data?${params.toString()}`);
+        console.log(`${config.BACKEND_URL}/data?${params.toString()}`)
+
+    }, [filterAttribute, filterValue, sortAttribute, sortDirection]);
+
+    const {data, loading, error, refetch} = useFetch<TrainData[]>(url);
 
     const rows = (data || []).map((element) => (
         <Table.Tr key={element._id}>
@@ -37,30 +41,34 @@ export default function TrainTable() {
         </Table.Tr>
     ));
 
-    const handleSortChange = (value: string | null) => {
-        setSortAttribute(value);
-    };
-
-    const handleFilterAttributeChange = (value: string | null) => {
-        setFilterAttribute(value);
-        if (value && data) {
-            // Extract unique values for the selected attribute
-            const uniqueValues = Array.from(new Set(data.map((item) => item[value as keyof TrainData]?.toString() || '')));
-            setFilterOptions(uniqueValues);
+    const handleSort = async (attribute: string) => {
+        if (sortAttribute === attribute) {
+            setSortDirection((prev) => (prev === 1 ? -1 : 1));
         } else {
-            setFilterOptions([]);
+            setSortAttribute(attribute);
+            setSortDirection(1);
         }
+
+
+        await refetch()
     };
 
-    const handleFilterValueChange = (value: string | null) => {
-        setFilterValue(value);
-    };
+    const renderSortIcon = (attribute: string) => {
+        if (sortAttribute === attribute) {
+            return (
+                <ActionIcon onClick={() => handleSort(attribute)}>
+                    {sortDirection === 1 ? <IconArrowUp size={16}/> : <IconArrowDown size={16}/>}
+                </ActionIcon>
 
-    const onClear = () => {
-        setFilterValue(null);
-        setFilterAttribute(null);
-    };
+            )
+        }
+        return (
+            <ActionIcon onClick={() => handleSort(attribute)}>
+                <IconSwitchVertical size={16}/>
+            </ActionIcon>
 
+        )
+    };
 
     function Render() {
         if (loading) {
@@ -72,22 +80,9 @@ export default function TrainTable() {
                 <>
                     <Group grow align="end">
                         <Select
-                            label="Sort by"
-                            value={sortAttribute}
-                            onChange={handleSortChange}
-                            data={[
-                                {value: 'id', label: 'Id'},
-                                {value: 'time', label: 'Time'},
-                                {value: 'line', label: 'Line'},
-                                {value: 'origin', label: 'Origin'},
-                                {value: 'destination', label: 'Destination'},
-                                {value: 'occupation', label: 'Occupation'},
-                            ]}
-                        />
-                        <Select
                             label="Filter by"
                             value={filterAttribute}
-                            onChange={handleFilterAttributeChange}
+                            onChange={(value) => setFilterAttribute(value)}
                             data={[
                                 {value: 'id', label: 'Id'},
                                 {value: 'time', label: 'Time'},
@@ -102,24 +97,54 @@ export default function TrainTable() {
                                 <Select
                                     label="Filter value"
                                     value={filterValue}
-                                    onChange={handleFilterValueChange}
+                                    onChange={(value) => setFilterValue(value)}
                                     data={filterOptions.map((option) => ({value: option, label: option}))}
                                     searchable
                                     clearable
                                 />
-                                <Button onClick={onClear}>Clear</Button>
+                                <Button onClick={() => setFilterValue(null)}>Clear</Button>
                             </>
                         )}
                     </Group>
                     <Table>
                         <Table.Thead>
                             <Table.Tr>
-                                <Table.Th>Id</Table.Th>
-                                <Table.Th>Time</Table.Th>
-                                <Table.Th>Line</Table.Th>
-                                <Table.Th>Origin</Table.Th>
-                                <Table.Th>Destination</Table.Th>
-                                <Table.Th>Occupation</Table.Th>
+                                <Table.Th>
+                                    <Group>
+                                        Id
+                                        {renderSortIcon('id')}
+                                    </Group>
+                                </Table.Th>
+                                <Table.Th>
+                                    <Group>
+                                        Time
+                                        {renderSortIcon('time')}
+                                    </Group>
+                                </Table.Th>
+                                <Table.Th>
+                                    <Group>
+                                        Line
+                                        {renderSortIcon('line')}
+                                    </Group>
+                                </Table.Th>
+                                <Table.Th>
+                                    <Group>
+                                        Origin
+                                        {renderSortIcon('origin')}
+                                    </Group>
+                                </Table.Th>
+                                <Table.Th>
+                                    <Group>
+                                        Destination
+                                        {renderSortIcon('destination')}
+                                    </Group>
+                                </Table.Th>
+                                <Table.Th>
+                                    <Group>
+                                        Occupation
+                                        {renderSortIcon('occupation')}
+                                    </Group>
+                                </Table.Th>
                                 <Table.Th>Next Stops</Table.Th>
                             </Table.Tr>
                         </Table.Thead>

@@ -79,7 +79,9 @@ router.get('/data', async (req, res) => {
     }
 
     if (sort) {
-        pipeline.push({$sort: {[sort]: 1}});
+        const sortKey = sort.split(":")[0]
+        const sortDirection = parseInt(sort.split(":")[1])
+        pipeline.push({$sort: {[sortKey]: sortDirection}});
     }
 
     if (pipeline.length === 0) {
