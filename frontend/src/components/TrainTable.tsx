@@ -1,15 +1,14 @@
 import {useEffect, useState} from 'react';
-import {ActionIcon, Button, Group, Loader, Select, Table, Text} from '@mantine/core';
+import {ActionIcon, Group, Loader, Menu, Table, Text} from '@mantine/core';
 import {IconArrowDown, IconArrowUp, IconFilter, IconSwitchVertical} from '@tabler/icons-react';
-import TrainData from "../interface/trainData.ts";
 import {useFetch} from "@mantine/hooks";
 import config from "../config.ts";
+import DataResponse from "../interface/DataResponse.ts";
 
 export default function TrainTable() {
     const [sortAttribute, setSortAttribute] = useState<string | null>(null);
     const [sortDirection, setSortDirection] = useState<1 | -1>(1);
     const [filterAttribute, setFilterAttribute] = useState<string | null>(null);
-    const [filterOptions, setFilterOptions] = useState<string[]>([]);
     const [filterValue, setFilterValue] = useState<string | null>(null);
     const [url, setUrl] = useState(`${config.BACKEND_URL}/data`);
 
@@ -27,9 +26,9 @@ export default function TrainTable() {
 
     }, [filterAttribute, filterValue, sortAttribute, sortDirection]);
 
-    const {data, loading, error, refetch} = useFetch<TrainData[]>(url);
+    const {data, loading, error, refetch} = useFetch<DataResponse>(url);
 
-    const rows = (data || []).map((element) => (
+    const rows = (data?.data || []).map((element) => (
         <Table.Tr key={element._id}>
             <Table.Td>{element.id}</Table.Td>
             <Table.Td>{element.time.toLocaleString()}</Table.Td>
@@ -53,11 +52,16 @@ export default function TrainTable() {
         await refetch()
     };
 
+    function capitalize(str: string): string {
+        if (!str) return str; // Handle empty strings
+        return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
     const headerItem = (attribute: string) => {
         return (
             <Group justify="flex-start" wrap="nowrap" gap="xs" style={{cursor: 'pointer'}}>
                 <Text>
-                    {attribute}
+                    {capitalize(attribute)}
                 </Text>
                 <ActionIcon variant="subtle" onClick={() => handleSort(attribute)}>
                     {sortAttribute === attribute ? (
@@ -66,9 +70,32 @@ export default function TrainTable() {
                         <IconSwitchVertical size={16}/>
                     )}
                 </ActionIcon>
-                <ActionIcon variant="subtle" onClick={() => handleSort(attribute)}>
-                    <IconFilter size={16}/>
-                </ActionIcon>
+                <Menu shadow="md" width={200}>
+                    <Menu.Target>
+                        <ActionIcon variant={filterAttribute === attribute ? 'filled' : 'subtle'}>
+                            <IconFilter size={16}/>
+                        </ActionIcon>
+                    </Menu.Target>
+                    <Menu.Dropdown>
+                        <Menu.Label>Filter</Menu.Label>
+                        {
+                            data?.filters[attribute] && data.filters[attribute].length > 0 ? (
+                                data.filters[attribute].map((option) => (
+                                    <Menu.Item
+                                        key={option}
+                                        disabled={filterValue === option}
+                                        onClick={() => {
+                                            setFilterValue(option);
+                                            setFilterAttribute(attribute);
+                                        }}>
+                                        <Text>{option}</Text>
+                                    </Menu.Item>
+                                ))
+                            ) : (
+                                <Menu.Item disabled>No options available</Menu.Item>
+                            )}
+                    </Menu.Dropdown>
+                </Menu>
             </Group>
         );
     };
@@ -81,42 +108,14 @@ export default function TrainTable() {
         } else {
             return (
                 <>
-                    <Group grow align="end">
-                        <Select
-                            label="Filter by"
-                            value={filterAttribute}
-                            onChange={(value) => setFilterAttribute(value)}
-                            data={[
-                                {value: 'id', label: 'Id'},
-                                {value: 'time', label: 'Time'},
-                                {value: 'line', label: 'Line'},
-                                {value: 'origin', label: 'Origin'},
-                                {value: 'destination', label: 'Destination'},
-                                {value: 'occupation', label: 'Occupation'},
-                            ]}
-                        />
-                        {filterAttribute && (
-                            <>
-                                <Select
-                                    label="Filter value"
-                                    value={filterValue}
-                                    onChange={(value) => setFilterValue(value)}
-                                    data={filterOptions.map((option) => ({value: option, label: option}))}
-                                    searchable
-                                    clearable
-                                />
-                                <Button onClick={() => setFilterValue(null)}>Clear</Button>
-                            </>
-                        )}
-                    </Group>
                     <Table style={{width: '100%'}}>
                         <Table.Thead>
                             <Table.Tr>
                                 <Table.Th>
-                                    {headerItem('id')}
+                                    Id
                                 </Table.Th>
                                 <Table.Th style={{whiteSpace: 'nowrap', textAlign: 'left'}}>
-                                    {headerItem('time')}
+                                    Time
                                 </Table.Th>
                                 <Table.Th style={{whiteSpace: 'nowrap', textAlign: 'left'}}>
                                     {headerItem('line')}

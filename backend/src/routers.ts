@@ -65,8 +65,8 @@ router.get('/data', async (req, res) => {
     const pipeline: any[] = [];
 
     if (filter) {
-        const key = filter.split("=")[0]
-        const value = filter.split("=")[1]
+        const key = filter.split("=")[0];
+        const value = filter.split("=")[1];
         pipeline.push({
             $match: {
                 [key]: {
@@ -75,33 +75,55 @@ router.get('/data', async (req, res) => {
                 }
             }
         });
-
     }
 
     if (sort) {
-        const sortKey = sort.split(":")[0]
-        const sortDirection = parseInt(sort.split(":")[1])
+        const sortKey = sort.split(":")[0];
+        const sortDirection = parseInt(sort.split(":")[1]);
         pipeline.push({$sort: {[sortKey]: sortDirection}});
     }
 
-    if (pipeline.length === 0) {
-        // Fetch all data if no filter or sort is provided
-        await trainModel.find({}).then((data) => {
-            res.json(data);
-        }).catch((err) => {
-            console.log(err);
-            res.status(500).json({error: "Error fetching data"});
-        });
-    } else {
-        await trainModel.aggregate(pipeline).then((data) => {
-            res.json(data);
-        }).catch((err) => {
-            console.log(err);
-            res.status(500).json({error: "Error fetching data"});
-        })
-    }
-})
-
+    const filtersPipeline = [
+        {
+            $facet: {
+                data: pipeline.length > 0 ? pipeline : [{$match: {}}],
+                filters: [
+                    {
+                        $group: {
+                            _id: null,
+                            line: {$addToSet: "$line"},
+                            origin: {$addToSet: "$origin"},
+                            destination: {$addToSet: "$destination"},
+                        }
+                    },
+                    {
+                        $project: {
+                            _id: 0,
+                            filters: {
+                                line: "$line",
+                                origin: "$origin",
+                                destination: "$destination",
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            $project: {
+                data: 1,
+                filters: {$arrayElemAt: ["$filters.filters", 0]}
+            }
+        }
+    ];
+    await trainModel.aggregate(filtersPipeline).then((result) => {
+        const response = result[0];
+        res.json(response);
+    }).catch((err) => {
+        console.log(err);
+        res.status(500).json({error: "Error fetching data"});
+    });
+});
 router.get("/fetch", async (req, res) => {
     await fetchData();
     await trainModel.find({}).then((data) => {
