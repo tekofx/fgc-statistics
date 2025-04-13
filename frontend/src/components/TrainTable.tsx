@@ -5,6 +5,9 @@ import {useFetch} from "@mantine/hooks";
 import config from "../config.ts";
 import DataResponse from "../interface/DataResponse.ts";
 
+type FilterKeys = 'line' | 'origin' | 'destination' | 'occupation';
+
+
 export default function TrainTable() {
     const [sortAttribute, setSortAttribute] = useState<string | null>(null);
     const [sortDirection, setSortDirection] = useState<1 | -1>(1);
@@ -40,7 +43,7 @@ export default function TrainTable() {
         </Table.Tr>
     ));
 
-    const handleSort = async (attribute: string) => {
+    const handleSort = async (attribute: FilterKeys) => {
         if (sortAttribute === attribute) {
             setSortDirection((prev) => (prev === 1 ? -1 : 1));
         } else {
@@ -57,7 +60,7 @@ export default function TrainTable() {
         return str.charAt(0).toUpperCase() + str.slice(1);
     }
 
-    const headerItem = (attribute: string) => {
+    const headerItem = (attribute: FilterKeys) => {
         return (
             <Group justify="flex-start" wrap="nowrap" gap="xs" style={{cursor: 'pointer'}}>
                 <Text>
