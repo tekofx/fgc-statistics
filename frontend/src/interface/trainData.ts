@@ -5,6 +5,6 @@ export default interface TrainData {
     origin: string;
     destination: string;
     occupation: number;
-    nextStops: Array<string>;
-    time: Date
+    nextStops: string;
+    time: string
 }

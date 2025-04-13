@@ -34,12 +34,12 @@ export default function TrainTable() {
     const rows = (data?.data || []).map((element) => (
         <Table.Tr key={element._id}>
             <Table.Td>{element.id}</Table.Td>
-            <Table.Td>{element.time.toLocaleString()}</Table.Td>
+            <Table.Td>{element.time}</Table.Td>
             <Table.Td>{element.line}</Table.Td>
             <Table.Td>{element.origin}</Table.Td>
             <Table.Td>{element.destination}</Table.Td>
             <Table.Td>{element.occupation}</Table.Td>
-            <Table.Td>{element.nextStops.toString()}</Table.Td>
+            <Table.Td>{element.nextStops}</Table.Td>
         </Table.Tr>
     ));
 

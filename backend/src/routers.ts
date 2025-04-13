@@ -111,11 +111,44 @@ router.get('/data', async (req, res) => {
         },
         {
             $project: {
-                data: 1,
+                data: {
+                    $map: {
+                        input: "$data",
+                        as: "item",
+                        in: {
+                            id: "$$item._id",
+                            time: {
+                                $dateToString: {
+                                    format: "%d/%m/%Y %H:%M",
+                                    date: "$$item.time",
+                                    timezone: "UTC"
+                                }
+                            },
+                            line: "$$item.line",
+                            origin: "$$item.origin",
+                            destination: "$$item.destination",
+                            occupation: "$$item.occupation",
+                            nextStops: {
+                                $reduce: {
+                                    input: "$$item.nextStops",
+                                    initialValue: "",
+                                    in: {
+                                        $concat: [
+                                            "$$value",
+                                            {$cond: [{$eq: ["$$value", ""]}, "", ", "]},
+                                            "$$this"
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
                 filters: {$arrayElemAt: ["$filters.filters", 0]}
             }
         }
     ];
+
     await trainModel.aggregate(filtersPipeline).then((result) => {
         const response = result[0];
         res.json(response);
