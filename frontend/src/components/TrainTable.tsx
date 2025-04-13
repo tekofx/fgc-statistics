@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react';
-import {ActionIcon, Button, Group, Loader, Select, Table} from '@mantine/core';
-import {IconArrowDown, IconArrowUp, IconSwitchVertical} from '@tabler/icons-react';
+import {ActionIcon, Button, Group, Loader, Select, Table, Text} from '@mantine/core';
+import {IconArrowDown, IconArrowUp, IconFilter, IconSwitchVertical} from '@tabler/icons-react';
 import TrainData from "../interface/trainData.ts";
 import {useFetch} from "@mantine/hooks";
 import config from "../config.ts";
@@ -53,21 +53,24 @@ export default function TrainTable() {
         await refetch()
     };
 
-    const renderSortIcon = (attribute: string) => {
-        if (sortAttribute === attribute) {
-            return (
-                <ActionIcon onClick={() => handleSort(attribute)}>
-                    {sortDirection === 1 ? <IconArrowUp size={16}/> : <IconArrowDown size={16}/>}
-                </ActionIcon>
-
-            )
-        }
+    const headerItem = (attribute: string) => {
         return (
-            <ActionIcon onClick={() => handleSort(attribute)}>
-                <IconSwitchVertical size={16}/>
-            </ActionIcon>
-
-        )
+            <Group justify="flex-start" wrap="nowrap" gap="xs" style={{cursor: 'pointer'}}>
+                <Text>
+                    {attribute}
+                </Text>
+                <ActionIcon variant="subtle" onClick={() => handleSort(attribute)}>
+                    {sortAttribute === attribute ? (
+                        sortDirection === 1 ? <IconArrowUp size={16}/> : <IconArrowDown size={16}/>
+                    ) : (
+                        <IconSwitchVertical size={16}/>
+                    )}
+                </ActionIcon>
+                <ActionIcon variant="subtle" onClick={() => handleSort(attribute)}>
+                    <IconFilter size={16}/>
+                </ActionIcon>
+            </Group>
+        );
     };
 
     function Render() {
@@ -106,44 +109,26 @@ export default function TrainTable() {
                             </>
                         )}
                     </Group>
-                    <Table>
+                    <Table style={{width: '100%'}}>
                         <Table.Thead>
                             <Table.Tr>
                                 <Table.Th>
-                                    <Group>
-                                        Id
-                                        {renderSortIcon('id')}
-                                    </Group>
+                                    {headerItem('id')}
+                                </Table.Th>
+                                <Table.Th style={{whiteSpace: 'nowrap', textAlign: 'left'}}>
+                                    {headerItem('time')}
+                                </Table.Th>
+                                <Table.Th style={{whiteSpace: 'nowrap', textAlign: 'left'}}>
+                                    {headerItem('line')}
                                 </Table.Th>
                                 <Table.Th>
-                                    <Group>
-                                        Time
-                                        {renderSortIcon('time')}
-                                    </Group>
+                                    {headerItem('origin')}
                                 </Table.Th>
                                 <Table.Th>
-                                    <Group>
-                                        Line
-                                        {renderSortIcon('line')}
-                                    </Group>
+                                    {headerItem('destination')}
                                 </Table.Th>
                                 <Table.Th>
-                                    <Group>
-                                        Origin
-                                        {renderSortIcon('origin')}
-                                    </Group>
-                                </Table.Th>
-                                <Table.Th>
-                                    <Group>
-                                        Destination
-                                        {renderSortIcon('destination')}
-                                    </Group>
-                                </Table.Th>
-                                <Table.Th>
-                                    <Group>
-                                        Occupation
-                                        {renderSortIcon('occupation')}
-                                    </Group>
+                                    {headerItem('occupation')}
                                 </Table.Th>
                                 <Table.Th>Next Stops</Table.Th>
                             </Table.Tr>
