@@ -7,6 +7,7 @@ import TimeChart from "./components/TimeChart.tsx";
 import {createTheme, MantineProvider} from "@mantine/core";
 import '@mantine/core/styles.css';
 import '@mantine/charts/styles.css';
+import '@mantine/dates/styles.css';
 import Home from "./components/Home.tsx";
 
 const theme = createTheme({});

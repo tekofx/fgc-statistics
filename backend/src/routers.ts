@@ -7,57 +7,63 @@ const router = express.Router();
 
 
 router.get("/occupation", async (req, res) => {
-
     const line = req.query.line;
     const nextStop = req.query.nextStop;
+    const from = req.query.from ? new Date(req.query.from as string) : null;
+    const to = req.query.to ? new Date(req.query.to as string) : null;
 
     const pipeline: any[] = [];
+
     if (line) {
-        pipeline.push({$match: {line: line}});
+        pipeline.push({ $match: { line: line } });
     }
 
     if (nextStop) {
         pipeline.push({
             $match: {
                 $expr: {
-                    $eq: [{$arrayElemAt: ["$nextStops", 0]}, nextStop]
+                    $eq: [{ $arrayElemAt: ["$nextStops", 0] }, nextStop]
                 }
             }
         });
     }
 
+    if (from) {
+        pipeline.push({ $match: { time: { $gte: from } } });
+    }
+
+    if (to) {
+        pipeline.push({ $match: { time: { $lte: to } } });
+    }
 
     pipeline.push(
         {
             $group: {
                 _id: {
-                    hour: {$hour: "$time"}
+                    hour: { $hour: "$time" }
                 },
-                averageOccupation: {$avg: "$occupation"}
+                averageOccupation: { $avg: "$occupation" }
             }
         },
         {
-            $sort: {"_id.hour": 1}
+            $sort: { "_id.hour": 1 }
         },
         {
             $project: {
                 _id: 0,
                 hour: "$_id.hour",
-                averageOccupation: {$round: [{$multiply: ["$averageOccupation", 100]}, 2]}
+                averageOccupation: { $round: [{ $multiply: ["$averageOccupation", 100] }, 2] }
             }
         }
     );
-
 
     await trainModel.aggregate(pipeline).then((data) => {
         res.json(data);
     }).catch((err) => {
         console.log(err);
-        res.status(500).json({error: "Error fetching data"});
-    })
-
-})
-
+        res.status(500).json({ error: "Error fetching data" });
+    });
+});
 router.get('/data', async (req, res) => {
     const filter = req.query.filter as string | undefined;
     const sort = req.query.sort as string | undefined;

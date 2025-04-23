@@ -6,10 +6,13 @@ import {IconAlertTriangle, IconReload} from "@tabler/icons-react";
 import TimeData from "../interface/timeData.ts";
 import {useState} from "react";
 import {IStopCodeResponse} from "../interface/IStopCodeResponse.ts";
+import {DateInput} from "@mantine/dates";
 
 export default function TimeChart() {
     const {width} = useViewportSize()
     const [stopCode, setStopCode] = useState<string>('');
+    const [fromDate, setFromDate] = useState<Date | null>(null);
+    const [toDate, setToDate] = useState<Date | null>(null);
 
     const {data: occupationData, loading: loadingOccupation, error: errorOccupation, refetch} = useFetch<TimeData[]>(
         stopCode !== ''
@@ -30,22 +33,46 @@ export default function TimeChart() {
         }
     };
 
+    const handleDateChange = async (date: Date | null, type: 'from' | 'to') => {
+        if (type === 'from') {
+            setFromDate(date);
+        } else {
+            setToDate(date);
+        }
+
+        await refetch();
+    }
+
 
     return (
         <>
             {!loadingStopCodes && !errorStopCodes && (
+                <>
+                    {/*TODO: Remove value and label and only set an array of nom_estacio.
+                    Warning: Monistrol de Montserrat is duplicated and gives an error*/}
 
-                /*TODO: Remove value and label and only set an array of nom_estacio.
-                   Warning: Monistrol de Montserrat is duplicated and gives an error
-                * */
-                <Autocomplete
-                    label="Next Stop"
-                    onChange={handleStopCodeChange}
-                    data={stopCodeResponse?.results.map((stopCode) => ({
-                        value: stopCode.inicials,
-                        label: stopCode.nom_estacio, // Add the label property
-                    }))}
-                />
+                    <Autocomplete
+                        label="Next Stop"
+                        onChange={handleStopCodeChange}
+                        data={stopCodeResponse?.results.map((stopCode) => ({
+                            value: stopCode.inicials,
+                            label: stopCode.nom_estacio, // Add the label property
+                        }))}
+                    />
+
+                    <DateInput
+                        value={fromDate}
+                        onChange={(date) => handleDateChange(date, 'from')}
+                        label="From"
+                    />
+
+                    <DateInput
+                        value={toDate}
+                        onChange={(date) => handleDateChange(date, 'to')}
+                        label="To"
+                    />
+                </>
+
             )}
             <Button loaderProps={{type: "dots"}} loading={loadingOccupation} leftSection={<IconReload/>}
                     onClick={refetch}>Reload</Button>
