@@ -1,6 +1,5 @@
 import express from "express";
 import trainModel from "./trainModel";
-import {fetchData} from "./database";
 
 
 const router = express.Router();
@@ -11,6 +10,8 @@ router.get("/occupation", async (req, res) => {
     const nextStop = req.query.nextStop;
     const from = req.query.from ? new Date(req.query.from as string) : null;
     const to = req.query.to ? new Date(req.query.to as string) : null;
+
+    console.log(line, from, to, nextStop);
 
     const pipeline: any[] = [];
 
